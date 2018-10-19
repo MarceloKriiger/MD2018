@@ -1,0 +1,48 @@
+
+
+```{r}
+require(dplyr)
+require(ggplot2)
+require(e1071)
+require(caret)
+
+carros <- mtcars
+
+carros$carb <- as.factor(carros$carb)
+```
+
+Criando variavel com os dados para o treino
+```{r}
+carrosTreino <- subset(carros, select = -carb)
+result <- carros$carb
+```
+
+Criando o SVM
+```{r}
+modeloSVM <-svm(carb ~., data = carros, kernel = "radial", cost = 5)
+```
+
+Predição
+```{r}
+carrosTeste <- predict(modeloSVM, carrosTreino)
+```
+
+Matriz de confusão
+```{r}
+table(carrosTeste, result)
+
+confusionMatrix(carros$carb, carrosTeste)
+```
+
+Testando com outros kernels
+```{r}
+modeloSVM <-svm(carb ~., data = carros, kernel = "polynomial")
+
+carrosTeste <- predict(modeloSVM, carrosTreino)
+
+table(carrosTeste, result)
+
+confusionMatrix(carros$carb, carrosTeste)
+```
+
+
