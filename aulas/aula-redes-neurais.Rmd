@@ -205,4 +205,3 @@ Treinar e testar redes neurais para o problema de classificação individual.
 
 
 
-

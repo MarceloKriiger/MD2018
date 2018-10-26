@@ -1,0 +1,30 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+require(pacman)
+p_load(neural)
+p_load(freestats)
+
+z <- mtcars$cyl
+d <- fakedata(w=z,n=32)
+plot(d$S[,1], d$S[,2], col=d$y+3)
+
+r <- perceptrain(S = d$S, y= d$y, alpha_k = .001, endcost = 0)
+
+t = rep(0,nrow(d$S))
+
+for (i in 1:nrow(d$S)) {
+   t[i] = r$z %*% d$S[i,] # ativacao do neuronio
+}
+
+carrosTrain <- mlptrain(inp = d$S[,1:2], neurons = c(2,2), out = as.matrix(d$y), visual = F, it = 3000)
+
+saida <- mlp(d$S[,1:2], weight = carrosTrain$weight, dist = carrosTrain$dist, neurons = carrosTrain$neurons, actfns = carrosTrain$actfns)
+
+dados <- data.frame(inp = d$S[,1:2], y = as.factor(ifelse(d$y<0,0,1)), t = as.factor(ifelse(saida>mean(saida), 1, 0)))
+
+ggplot(dados, aes(x = inp.1, y = inp.2)) + geom_point(aes(color = y, shape = t))
+```

@@ -1,0 +1,41 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+require(caret)
+require(dplyr)
+require(ggplot2)
+
+carros <- mtcars
+carros$am <- as.factor(carros$am)
+```
+
+Criando uma partição dos dados para o treino
+```{r}
+trainIndex <- createDataPartition(carros$am, p = 0.5, list = FALSE, times = 1)
+carrosTrain <- carros[trainIndex,]
+carrosTest <- carros[-trainIndex,]
+
+```
+
+Parâmetros de controle para o treino
+```{r}
+fitControl <- trainControl(method = "cv", number = 5)
+```
+
+Estimando o melhor k do knn para este treinamento
+```{r}
+knnFit1 <- train(am ~., data = carrosTrain, method = "knn", trControl = fitControl, preProcess = c("center", "scale"))
+
+```
+
+Avaliando os resultados
+```{r}
+knnPredict <- predict(knnFit1, newdata = carrosTest)
+
+confusionMatrix(knnPredict, carrosTest$am)
+
+```
+
